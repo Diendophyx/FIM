@@ -32,10 +32,50 @@ if ($response -eq "A".ToUpper()) {
     $files = Get-ChildItem -Path C:\Users\henri\Documents\FimTest
 
     # For each file, calculate the hash, and write to baseline.txt
-    foreach ($f in $files) {
+    foreach ($f in $files){
         $hash = Calculate-File-Hash $f.FullName
         "$($hash.Path)|$($hash.Hash)" | Out-File -FilePath C:\Users\henri\Documents\repos\FIM\baseline.txt -Append
-    }
-    
-}
+        }
+    } elseif($response -eq "B".ToUpper()){
+         $fileHashDictionary =@{}
+        
+         #Load current list of hashes and store them in a dictionary
+         $filePathesAndHashes = Get-Content -Path C:\Users\henri\Documents\repos\FIM\baseline.txt
+         $filePathesAndHashes
+        
+         foreach($f in $filePathesAndHashes){
+        
+            $f.Split("|")[1]
+             $fileHashDictionary.add($f.Split("|")[0], $f.Split("|")[1])
+        
+         }
+        
+            $fileHashDictionary
+        
+            while($true){
+        
+            Start-Sleep -Seconds 1
+
+            $files = Get-ChildItem -Path C:\Users\henri\Documents\FimTest
+        
+            #Notify if a new file has been created
+            foreach ($f in $files) {
+                $hash = Calculate-File-Hash $f.FullName
+
+                if($fileHashDictionary[$hash.Path] -eq $null){
+                    Write-Host "$($hash.Path) has been created!" -ForegroundColor Green
+
+                    #30:00 up to
+                }
+        
+            }
+                
+        }
+        
+         
+ }
+
+
+
+
 
