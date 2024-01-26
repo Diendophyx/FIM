@@ -17,8 +17,8 @@ Function Erase-Baseline-If-Already-Exists() {
 Write-Host ""
 Write-Host "What would you like to do?"
 Write-Host ""
-Write-Host "    A) Collect new Baseline?"
-Write-Host "    B) Begin monitoring files with saved Baseline?"
+Write-Host "    A) Save new hashes?"
+Write-Host "    B) Monitor for changes"
 Write-Host ""
 $response = Read-Host -Prompt "Please enter 'A' or 'B'"
 Write-Host ""
@@ -29,7 +29,7 @@ if ($response -eq "A".ToUpper()) {
 
     # Calculate Hash from the target files and store in baseline.txt
     # Collect all files in the target folder
-    $files = Get-ChildItem -Path C:\Users\henri\Documents\FimTest
+    $files = Get-ChildItem -Path C:\Users\henri\Documents\repos\FIM\fim_test
 
     # For each file, calculate the hash, and write to baseline.txt
     foreach ($f in $files){
@@ -56,7 +56,7 @@ if ($response -eq "A".ToUpper()) {
         
             Start-Sleep -Seconds 1
 
-            $files = Get-ChildItem -Path C:\Users\henri\Documents\FimTest
+            $files = Get-ChildItem -Path C:\Users\henri\Documents\repos\FIM\fim_test
         
             #Notify if a new file has been created
             foreach ($f in $files) {
@@ -65,13 +65,25 @@ if ($response -eq "A".ToUpper()) {
                 if($fileHashDictionary[$hash.Path] -eq $null){
                     Write-Host "$($hash.Path) has been created!" -ForegroundColor Green
 
-                    #30:00 up to
+                }
+                if($fileHashDictionary[$hash.Path]-eq $hash.Hash){
+                    #the file is the same, unaltered
+                } else{
+                Write-Host "$($hash.Path) has changed!!!" -ForegroundColor Red
                 }
         
             }
+
+            forEach($key in $fileHashDictionary.Keys){
+                $fileStillExists= Test-Path -Path $key
+                if(-Not $fileStillExists){
+                #one of the baseline files has been delted, notify user
+                Write-Host "$($key) has been deleted!!!" -ForegroundColor Red
+                }
+
+            }
                 
         }
-        
          
  }
 
